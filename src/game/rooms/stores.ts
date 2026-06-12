@@ -8,7 +8,14 @@ export const stores: RoomDef = {
   background: 'bg/stores',
   music: 'music/reception',
   walkboxes: [{ points: [[20, 142], [300, 142], [312, 196], [8, 196]] }],
-  scale: { yTop: 142, sTop: 0.78, yBottom: 196, sBottom: 1 },
+  scale: { yTop: 142, sTop: 0.7, yBottom: 196, sBottom: 1 },
+  overlays: [
+    { image: 'fg/stores-counter', x: 0, y: 0, z: 178 },
+  ],
+  ambients: [
+    { image: 'fg/stores-amb-lamp', x: 0, y: 0, z: 0, mode: 'flicker', max: 0.4 },
+    { image: 'fg/stores-amb-wrench', x: 0, y: 0, z: 0, mode: 'pulse', period: 2.6, min: 0.1, max: 0.55 },
+  ],
   spawns: {
     fromHub: { at: [160, 190], facing: 'up' },
   },

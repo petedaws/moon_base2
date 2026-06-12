@@ -8,7 +8,13 @@ export const landing: RoomDef = {
   background: 'bg/landing',
   music: 'music/landing',
   walkboxes: [{ points: [[30, 145], [290, 145], [312, 196], [8, 196]] }],
-  scale: { yTop: 145, sTop: 0.78, yBottom: 196, sBottom: 1 },
+  scale: { yTop: 145, sTop: 0.7, yBottom: 196, sBottom: 1 },
+  overlays: [
+    { image: 'fg/landing-crate', x: 0, y: 0, z: 170 },
+  ],
+  ambients: [
+    { image: 'fg/landing-amb-ceiling-light', x: 0, y: 0, z: 0, mode: 'flicker', max: 0.5 },
+  ],
   spawns: {
     start: { at: [60, 170], facing: 'right' },
     fromReception: { at: [285, 175], facing: 'left' },
@@ -20,6 +26,7 @@ export const landing: RoomDef = {
       name: 'reception',
       polygon: [[296, 100], [320, 100], [320, 196], [296, 196]],
       walkTo: [290, 175],
+      door: { image: 'fg/landing-door', clip: [252, 67, 45, 92], dx: 0, dy: -85 },
     },
   ],
   actors: [

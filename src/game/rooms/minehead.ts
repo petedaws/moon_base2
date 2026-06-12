@@ -11,7 +11,14 @@ export const minehead: RoomDef = {
   background: 'bg/minehead',
   music: 'music/tunnels',
   walkboxes: [{ points: [[20, 142], [300, 142], [312, 196], [8, 196]] }],
-  scale: { yTop: 142, sTop: 0.78, yBottom: 196, sBottom: 1 },
+  scale: { yTop: 142, sTop: 0.68, yBottom: 196, sBottom: 1 },
+  overlays: [
+    { image: 'fg/minehead-winch', x: 0, y: 0, z: 180 },
+  ],
+  ambients: [
+    { image: 'fg/minehead-amb-lamp-a', x: 0, y: 0, z: 0, mode: 'flicker', max: 0.5 },
+    { image: 'fg/minehead-amb-lamp-b', x: 0, y: 0, z: 0, mode: 'flicker', max: 0.45 },
+  ],
   spawns: {
     fromHub: { at: [30, 175], facing: 'right' },
     fromDoor: { at: [250, 160], facing: 'down' },

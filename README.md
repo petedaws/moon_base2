@@ -40,14 +40,21 @@ node tools/e2e-playthrough.mjs   # full golden-path playthrough in headless
 - Backtick (`` ` ``) in dev builds toggles a debug overlay (walkboxes,
   hotspots; `P` logs cursor position, `C` captures polygons for room defs).
 
-## Asset pipeline (art is currently placeholders)
+## Asset pipeline
 
 Backgrounds come from the OpenAI Images API, characters from Meshy
 (text-to-3D → rig → animate → headless-Blender sprite render); everything is
 downscaled and quantized to a frozen 64-color master palette
-(`tools/quantize.ts`). Keys go in `.env` (see `.env.example`); raw API output
-is cached in `.cache/`, processed art is committed under `public/assets/` so
-the game always builds without network access.
+(`tools/quantize.ts`, `tools/palette.json`). Keys go in `.env` (see
+`.env.example`); raw API output is cached in `.cache/`, processed art is
+committed under `public/assets/` so the game always builds without network
+access. All 12 room backgrounds and Pip's sprite sheet are generated; the
+other characters still use the engine's capsule placeholders — run
+`npm run gen:char -- <id>` per character to fill them in.
+
+The Blender render step needs `pip install -r tools/requirements.txt`
+(Python 3.11 for the bpy wheel), `numpy<2`, and system GL libraries
+(`apt-get install libegl1 libgl1`).
 
 ```sh
 npm run gen:bg -- landing      # one background

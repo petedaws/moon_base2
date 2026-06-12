@@ -8,7 +8,19 @@ export const reception: RoomDef = {
   background: 'bg/reception',
   music: 'music/reception',
   walkboxes: [{ points: [[20, 142], [300, 142], [312, 196], [8, 196]] }],
-  scale: { yTop: 142, sTop: 0.78, yBottom: 196, sBottom: 1 },
+  scale: { yTop: 142, sTop: 0.7, yBottom: 196, sBottom: 1 },
+  overlays: [
+    { image: 'fg/reception-desk', x: 0, y: 0, z: 152 },
+    { image: 'fg/reception-post-left', x: 0, y: 0, z: 172 },
+    { image: 'fg/reception-post-center', x: 0, y: 0, z: 176 },
+    { image: 'fg/reception-post-right', x: 0, y: 0, z: 188 },
+    { image: 'fg/reception-post-front', x: 0, y: 0, z: 198 },
+    { image: 'fg/reception-rope-left', x: 0, y: 0, z: 176 },
+    { image: 'fg/reception-rope-right', x: 0, y: 0, z: 188 },
+  ],
+  ambients: [
+    { image: 'fg/reception-amb-sconce', x: 0, y: 0, z: 0, mode: 'flicker', max: 0.5 },
+  ],
   spawns: {
     fromLanding: { at: [30, 175], facing: 'right' },
     fromHub: { at: [290, 172], facing: 'left' },
@@ -20,6 +32,7 @@ export const reception: RoomDef = {
       name: 'the landing bay',
       polygon: [[0, 100], [22, 100], [22, 196], [0, 196]],
       walkTo: [28, 175],
+      door: { image: 'fg/reception-door-landing', clip: [1, 45, 36, 104], dx: 0, dy: -96 },
     },
     {
       to: 'hub',
@@ -27,6 +40,7 @@ export const reception: RoomDef = {
       name: 'the base proper',
       polygon: [[298, 95], [320, 95], [320, 196], [298, 196]],
       walkTo: [292, 172],
+      door: { image: 'fg/reception-door-security', clip: [272, 49, 40, 96], dx: 0, dy: -90 },
       onExit: async (ctx) => {
         if (!ctx.flag(F.badgePrinted)) {
           await ctx.say('pumblechook', `AHEM. Badge.`);
@@ -46,8 +60,8 @@ export const reception: RoomDef = {
     },
     {
       actor: 'pumblechook',
-      at: [170, 138],
-      facing: 'down',
+      at: [245, 150],
+      facing: 'left',
       condition: (s) => !s.flags[F.pumblechookGone],
       dialog: 'pumblechook',
       onLook: say('pip', `Officer Pumblechook. He has the posture of a man who irons his uniform while wearing it.`),

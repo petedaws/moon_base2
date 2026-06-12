@@ -8,7 +8,14 @@ export const doorchamber: RoomDef = {
   background: 'bg/doorchamber',
   music: 'music/door',
   walkboxes: [{ points: [[40, 150], [280, 150], [290, 196], [30, 196]] }],
-  scale: { yTop: 150, sTop: 0.85, yBottom: 196, sBottom: 1 },
+  scale: { yTop: 150, sTop: 0.6, yBottom: 196, sBottom: 1 },
+  overlays: [
+    { image: 'fg/doorchamber-camp', x: 0, y: 0, z: 192 },
+  ],
+  ambients: [
+    { image: 'fg/doorchamber-amb-glyphs', x: 0, y: 0, z: 0, mode: 'pulse', period: 4.2, min: 0.12, max: 0.5 },
+    { image: 'fg/doorchamber-amb-torch', x: 0, y: 0, z: 0, mode: 'flicker', max: 0.55 },
+  ],
   spawns: {
     fromElevator: { at: [55, 175], facing: 'right' },
   },

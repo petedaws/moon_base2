@@ -6,8 +6,8 @@
 
 import sharp from 'sharp';
 import { applyPalette, buildPalette, utils } from 'image-q';
-import { existsSync, readFileSync, writeFileSync } from 'node:fs';
-import { join } from 'node:path';
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
+import { dirname, join } from 'node:path';
 import { ROOT } from './util';
 
 const PALETTE_FILE = join(ROOT, 'tools', 'palette.json');
@@ -50,16 +50,18 @@ export async function quantizeImage(
     console.warn('no master palette yet — quantizing standalone');
     palette = await buildPalette([container], { colors: PALETTE_SIZE, paletteQuantization: 'wuquant' });
   }
+  // Snapshot source pixels first: applyPalette mutates the container in
+  // place, and palette mapping forces alpha to 255.
+  const src = Uint8Array.from(container.toUint8Array());
   const out = await applyPalette(container, palette, { imageQuantization: 'nearest' });
   const arr = out.toUint8Array();
-  // Preserve transparency from the source (palette mapping forces alpha 255).
-  const src = container.toUint8Array();
   for (let i = 3; i < arr.length; i += 4) if (src[i]! < 128) arr[i] = 0;
   const png = await sharp(Buffer.from(arr), {
     raw: { width: out.getWidth(), height: out.getHeight(), channels: 4 },
   })
     .png()
     .toBuffer();
+  mkdirSync(dirname(output), { recursive: true });
   writeFileSync(output, png);
   console.log(`quantized ${input} -> ${output} (${out.getWidth()}x${out.getHeight()})`);
 }

@@ -96,6 +96,7 @@ export class Actor {
   }
 
   draw(ctx: CanvasRenderingContext2D, sheet?: HTMLCanvasElement | HTMLImageElement): void {
+    if (this.def.invisible) return;
     const b = this.bounds();
     if (sheet) {
       this.drawSheet(ctx, sheet, b);

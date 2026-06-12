@@ -8,7 +8,15 @@ export const havisham: RoomDef = {
   background: 'bg/havisham',
   music: 'music/door',
   walkboxes: [{ points: [[25, 145], [295, 145], [305, 196], [15, 196]] }],
-  scale: { yTop: 145, sTop: 0.8, yBottom: 196, sBottom: 1 },
+  scale: { yTop: 145, sTop: 0.7, yBottom: 196, sBottom: 1 },
+  overlays: [
+    { image: 'fg/havisham-table', x: 0, y: 0, z: 192 },
+    { image: 'fg/havisham-chair', x: 0, y: 0, z: 187 },
+  ],
+  ambients: [
+    { image: 'fg/havisham-amb-sconce', x: 0, y: 0, z: 0, mode: 'flicker', max: 0.45 },
+    { image: 'fg/havisham-amb-window-shaft', x: 0, y: 0, z: 0, mode: 'pulse', period: 9, max: 0.2 },
+  ],
   spawns: {
     fromHub: { at: [35, 172], facing: 'right' },
     fromLab: { at: [35, 172], facing: 'right' },
@@ -25,7 +33,7 @@ export const havisham: RoomDef = {
   actors: [
     {
       actor: 'havisham',
-      at: [230, 160],
+      at: [272, 192],
       facing: 'left',
       dialog: 'havisham',
       onLook: say('pip', `Ms. Havisham. She sits perfectly still, like a portrait of herself. The dust around her chair is undisturbed in a precise circle.`),
