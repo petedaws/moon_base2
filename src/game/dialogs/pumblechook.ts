@@ -71,6 +71,48 @@ export const pumblechookDialog: DialogDef = {
           ),
         },
         {
+          id: 'form',
+          text: `Could I have a blank Form RQ-7?`,
+          condition: (s) => !!s.flags[F.knowsFormNeeded] && !s.flags[F.hasForm],
+          response: async (ctx) => {
+            await ctx.say('pumblechook', `A Form RQ-7? A FORM. R. Q. SEVEN?`);
+            await ctx.sayP(`Is that... bad?`);
+            await ctx.say('pumblechook', `Bad? BAD? Gibbous, I have waited YEARS for someone on this base to request the correct form unprompted.`);
+            await ctx.say('pumblechook', `Take three. Take a SPARE TRIPLICATE. Oh, this is the best Tuesday in living memory.`);
+            ctx.giveItem('form');
+            ctx.setFlag(F.hasForm);
+            await ctx.sayP(`I've made a bureaucrat cry. I don't know how to feel about my new powers.`);
+          },
+        },
+        {
+          id: 'paperweight',
+          text: `That's a nice paperweight you have there.`,
+          condition: (s) => !!s.flags[F.knowsAboutKeys] && !s.flags[F.hasPaperweight],
+          once: true,
+          response: lines(
+            ['pumblechook', `Hands off. That meteorite landed on this very desk the week the base opened. It chose ME.`],
+            ['pip', `Meteorites don't usually land INSIDE buildings.`],
+            ['pumblechook', `This one had initiative.`],
+          ),
+        },
+        {
+          id: 'stressballs',
+          text: `Did you know there are 600 UNLOGGED stress balls in the landing bay?`,
+          condition: (s) => !!s.flags[F.knowsStressBalls] && !s.flags[F.pumblechookGone],
+          response: async (ctx) => {
+            await ctx.say('pumblechook', `Unlogged? UNLOGGED?!`);
+            await ctx.sayP(`Six hundred of them. Just... sitting there. Uncounted. Anarchic.`);
+            await ctx.say('pumblechook', `Six hundred items of unregistered inventory. On MY base. This is a Code Beige. There hasn't been a Code Beige since the great napkin surplus of '61!`);
+            await ctx.say('pumblechook', `Gibbous. You are hereby deputized as ACTING RECEPTIONIST. Touch nothing. Greet no one. The desk must never be unmanned.`);
+            await ctx.sayP(`Wait, what are my powers? WHAT ARE MY POWERS?`);
+            ctx.setFlag(F.pumblechookGone);
+            await ctx.fadeOut(300);
+            await ctx.fadeIn(300);
+            await ctx.sayP(`He's gone. I am the desk now.`);
+          },
+          goto: 'end',
+        },
+        {
           id: 'bye',
           text: `I'd better go.`,
           response: lines(['pumblechook', `Walk, don't bounce. Bouncing is for the gift shop.`]),

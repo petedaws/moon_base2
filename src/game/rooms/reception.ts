@@ -39,9 +39,16 @@ export const reception: RoomDef = {
   ],
   actors: [
     {
+      actor: 'biddy',
+      at: [105, 122],
+      dialog: 'biddy',
+      onLook: say('pip', `A BIDDY intercom, mounted at exactly regulation height.`),
+    },
+    {
       actor: 'pumblechook',
       at: [170, 138],
       facing: 'down',
+      condition: (s) => !s.flags[F.pumblechookGone],
       dialog: 'pumblechook',
       onLook: say('pip', `Officer Pumblechook. He has the posture of a man who irons his uniform while wearing it.`),
       onUseItem: {
@@ -77,6 +84,35 @@ export const reception: RoomDef = {
       facing: 'up',
       onLook: say('pip', `The reception desk. Every object on it is at a precise right angle to every other object. It's a little frightening.`),
       onUse: say('pumblechook', `Please do not touch the desk. The desk and I have an understanding.`),
+    },
+    {
+      id: 'paperweight',
+      name: 'meteorite paperweight',
+      polygon: [[196, 122], [212, 122], [212, 134], [196, 134]],
+      walkTo: [196, 162],
+      facing: 'up',
+      condition: (s) => !s.flags[F.hasPaperweight],
+      onLook: async (ctx) => {
+        await ctx.sayP(`A lump of dark metal keeping a stack of blank forms from escaping.`);
+        if (ctx.flag(F.knowsAboutKeys)) {
+          await ctx.sayP(`"A paperweight that fell from no sky." That's key number one, alright.`);
+        }
+      },
+      onUse: async (ctx) => {
+        if (!ctx.flag(F.pumblechookGone)) {
+          await ctx.say('pumblechook', `That paperweight has seniority over you, Gibbous.`);
+          await ctx.sayP(`It's a ROCK.`);
+          await ctx.say('pumblechook', `It's a rock with TENURE.`);
+          return;
+        }
+        await ctx.sayP(`As Acting Receptionist, I hereby requisition this paperweight for... door-related purposes.`);
+        ctx.playSfx('pickup');
+        ctx.giveItem('paperweight');
+        ctx.setFlag(F.hasPaperweight);
+        await ctx.sayP(`It's humming. Pumblechook's desk rock is HUMMING.`);
+        await ctx.say('biddy', `Noted for the record: the intern's first official act was theft.`);
+        await ctx.sayP(`REQUISITION.`);
+      },
     },
     {
       id: 'clock',

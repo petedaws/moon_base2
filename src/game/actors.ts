@@ -17,6 +17,46 @@ export const actors: Record<string, ActorDef> = {
     w: 18,
     h: 44,
   },
+  joe: {
+    id: 'joe',
+    name: 'Joe',
+    talkColor: '#f0c860',
+    color: '#c87830',
+    w: 20,
+    h: 46,
+  },
+  estella: {
+    id: 'estella',
+    name: 'Dr. Estella',
+    talkColor: '#c8b8f8',
+    color: '#e8e8f0',
+    w: 14,
+    h: 44,
+  },
+  wemmick: {
+    id: 'wemmick',
+    name: 'Quartermaster Wemmick',
+    talkColor: '#a8d8a8',
+    color: '#607060',
+    w: 13,
+    h: 42,
+  },
+  magwitch: {
+    id: 'magwitch',
+    name: 'Magwitch',
+    talkColor: '#d8a888',
+    color: '#5a4a40',
+    w: 19,
+    h: 44,
+  },
+  havisham: {
+    id: 'havisham',
+    name: 'Ms. Havisham',
+    talkColor: '#f8e8c8',
+    color: '#b0a890',
+    w: 16,
+    h: 38,
+  },
   // BIDDY speaks through intercom panels; this "actor" is only used so the
   // engine has something to attach talk text to when an intercom is on-screen.
   biddy: {

@@ -4,8 +4,22 @@ import { items } from './items';
 import { landing } from './rooms/landing';
 import { reception } from './rooms/reception';
 import { hub } from './rooms/hub';
+import { corridor } from './rooms/corridor';
+import { quarters } from './rooms/quarters';
+import { engineering } from './rooms/engineering';
+import { lab } from './rooms/lab';
+import { stores } from './rooms/stores';
+import { tunnels } from './rooms/tunnels';
+import { havisham } from './rooms/havisham';
+import { minehead } from './rooms/minehead';
+import { doorchamber } from './rooms/doorchamber';
 import { pumblechookDialog } from './dialogs/pumblechook';
 import { biddyDialog } from './dialogs/biddy';
+import { joeDialog } from './dialogs/joe';
+import { wemmickOnDialog, wemmickOffDialog } from './dialogs/wemmick';
+import { estellaDialog } from './dialogs/estella';
+import { magwitchDialog } from './dialogs/magwitch';
+import { havishamDialog } from './dialogs/havisham';
 import { music } from './music';
 import { sfx } from './sfx';
 
@@ -14,10 +28,25 @@ export const content: GameContent = {
     landing,
     reception,
     hub,
+    corridor,
+    quarters,
+    engineering,
+    lab,
+    stores,
+    tunnels,
+    havisham,
+    minehead,
+    doorchamber,
   },
   dialogs: {
     pumblechook: pumblechookDialog,
     biddy: biddyDialog,
+    joe: joeDialog,
+    wemmickOn: wemmickOnDialog,
+    wemmickOff: wemmickOffDialog,
+    estella: estellaDialog,
+    magwitch: magwitchDialog,
+    havisham: havishamDialog,
   },
   actors,
   items,

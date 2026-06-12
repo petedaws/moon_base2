@@ -95,8 +95,59 @@ const hub: Song = {
   ],
 };
 
+/** Tunnels & mine head: something is down there, but it's friendly. Probably. */
+const tunnels: Song = {
+  bpm: 60,
+  channels: [
+    {
+      wave: 'triangle',
+      volume: 0.06,
+      notes: [
+        ['D3', 3], ['F3', 1], ['E3', 4],
+        ['D3', 3], ['A3', 1], ['G3', 4],
+        [null, 4], ['F3', 2], ['E3', 2],
+        ['D3', 6], [null, 2],
+      ],
+    },
+    {
+      wave: 'sine',
+      volume: 0.08,
+      notes: [['D2', 8], ['C2', 8], ['Bb1', 8], ['A1', 8]],
+    },
+    {
+      wave: 'noise',
+      volume: 0.008,
+      notes: [[null, 7], ['D6', 1]],
+    },
+  ],
+};
+
+/** The Door & Havisham's quarters: a music box wound 26 years ago. */
+const door: Song = {
+  bpm: 66,
+  channels: [
+    {
+      wave: 'sine',
+      volume: 0.07,
+      notes: [
+        ['E5', 1], ['B4', 1], ['G4', 2],
+        ['F#5', 1], ['B4', 1], ['G4', 2],
+        ['E5', 1], ['C5', 1], ['A4', 2],
+        ['D#5', 1], ['B4', 1], ['G4', 1], [null, 1],
+      ],
+    },
+    {
+      wave: 'triangle',
+      volume: 0.06,
+      notes: [['E2', 4], ['C2', 4], ['A1', 4], ['B1', 4]],
+    },
+  ],
+};
+
 export const music: Record<string, Song> = {
   'music/landing': landing,
   'music/reception': reception,
   'music/hub': hub,
+  'music/tunnels': tunnels,
+  'music/door': door,
 };

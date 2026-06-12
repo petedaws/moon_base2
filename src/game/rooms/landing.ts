@@ -99,6 +99,7 @@ export const landing: RoomDef = {
           await ctx.sayP(`Got it! Let's see... stress balls, stress balls, more stress balls... and one toner cartridge!`);
           ctx.giveItem('toner');
           ctx.setFlag(F.crateOpen);
+          ctx.setFlag(F.knowsStressBalls);
           await ctx.say('biddy', `Congratulations. You have peaked on day one.`);
         },
         mint: say('pip', `The crate is unmoved by hospitality.`),

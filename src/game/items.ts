@@ -22,4 +22,39 @@ export const items: Record<string, ItemDef> = {
     name: 'intern badge',
     onLook: say('pip', `"P. GIBBOUS — INTERN (PROBATIONARY). Clearance: LOW." The photo is of someone else entirely.`),
   },
+  form: {
+    id: 'form',
+    name: 'Form RQ-7',
+    onLook: say('pip', `Requisition Form RQ-7, signed in triplicate. It smells faintly of power.`),
+  },
+  coil: {
+    id: 'coil',
+    name: 'heating coil',
+    onLook: say('pip', `A heating coil. Rated for "beverages, morale, and light welding."`),
+  },
+  driver: {
+    id: 'driver',
+    name: 'multidriver',
+    onLook: say('pip', `Joe's multidriver. It has seventeen bits and a bottle opener. A tool of civilization.`),
+  },
+  rubbings: {
+    id: 'rubbings',
+    name: 'glyph rubbings',
+    onLook: say('pip', `Charcoal rubbings of alien glyphs. Looking at them too long makes my teeth itch.`),
+  },
+  paperweight: {
+    id: 'paperweight',
+    name: 'meteorite paperweight',
+    onLook: say('pip', `Pumblechook's "meteorite" paperweight. Warm to the touch. Paperweights should not be warm.`),
+  },
+  wrench: {
+    id: 'wrench',
+    name: 'lucky wrench',
+    onLook: say('pip', `Joe's lucky wrench. The handle is covered in the same glyphs as the rubbings. Lucky indeed.`),
+  },
+  stirrer: {
+    id: 'stirrer',
+    name: 'ceremonial cake stirrer',
+    onLook: say('pip', `A long silver "stirrer" from a 26-year-old cake. It hums. Cutlery should not hum.`),
+  },
 };

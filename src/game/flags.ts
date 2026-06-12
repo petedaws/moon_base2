@@ -1,5 +1,6 @@
 // Flag keys in one place so content files can't typo them.
 export const F = {
+  // Act 1 — arrival & badge
   introSeen: 'introSeen',
   metPumblechook: 'metPumblechook',
   knowsTonerNeeded: 'knowsTonerNeeded',
@@ -9,4 +10,34 @@ export const F = {
   sawStoppedClock: 'sawStoppedClock',
   heardShaft9Denial: 'heardShaft9Denial',
   enteredHub: 'enteredHub',
+  // Act 1 — finding the door
+  metJoe: 'metJoe',
+  knowsCoffeeBroken: 'knowsCoffeeBroken',
+  knowsFormNeeded: 'knowsFormNeeded',
+  hasForm: 'hasForm',
+  coffeeFixed: 'coffeeFixed',
+  hasDriver: 'hasDriver',
+  ventOpen: 'ventOpen',
+  metMagwitch: 'metMagwitch',
+  knowsAboutDoor: 'knowsAboutDoor',
+  knowsAboutKeys: 'knowsAboutKeys',
+  // Act 2 — the glyph hunt
+  knowsStressBalls: 'knowsStressBalls',
+  pumblechookGone: 'pumblechookGone',
+  hasPaperweight: 'hasPaperweight',
+  toldWemmickCoffee: 'toldWemmickCoffee',
+  wemmickOffDuty: 'wemmickOffDuty',
+  knowsCageCode: 'knowsCageCode',
+  hasWrench: 'hasWrench',
+  metEstella: 'metEstella',
+  knowsEstellaStuck: 'knowsEstellaStuck',
+  gaveRubbings: 'gaveRubbings',
+  metHavisham: 'metHavisham',
+  gaveMint: 'gaveMint',
+  hasStirrer: 'hasStirrer',
+  minerClearance: 'minerClearance',
+  knowsKeyOrder: 'knowsKeyOrder',
+  // Act 3 — the descent
+  keysInserted: 'keysInserted',
+  doorOpened: 'doorOpened',
 } as const;
