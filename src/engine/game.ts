@@ -5,7 +5,7 @@ import { Assets } from './assets';
 import { Font } from './font';
 import { Actor } from './actor';
 import { Room, type HitTarget } from './room';
-import { newGameState, saveState, loadState, type GameState, type FlagValue } from './state';
+import { newGameState, saveState, loadState, hasSave, type GameState, type FlagValue } from './state';
 import type { ScriptCtx } from './script';
 import { runDialog } from './dialog';
 import { AudioEngine, type Sfx, type Song } from './audio';
@@ -72,6 +72,7 @@ export class Game {
   private clock = 0;
   private hover: HitTarget | null = null;
   private transitioning = false;
+  private titleState: { options: string[]; hover: number; resolve: (i: number) => void } | null = null;
 
   constructor(canvas: HTMLCanvasElement, content: GameContent) {
     this.renderer = new Renderer(canvas);
@@ -87,12 +88,7 @@ export class Game {
 
   // ---------------------------------------------------------------- lifecycle
 
-  async start(continueGame = false): Promise<void> {
-    if (continueGame) {
-      const loaded = loadState('auto');
-      if (loaded) this.state = loaded;
-    }
-    const spawn = continueGame ? 'restore' : this.content.startSpawn;
+  async start(): Promise<void> {
     let last = performance.now();
     let acc = 0;
     const step = 1 / 60;
@@ -107,8 +103,26 @@ export class Game {
       requestAnimationFrame(frame);
     };
     requestAnimationFrame(frame);
-    // The loop must be running before the first room enter: fades and says
-    // resolve inside update().
+
+    // The loop must be running before anything below: fades, says and the
+    // title screen all resolve inside update()/render().
+    let continueGame = false;
+    if (hasSave('auto')) {
+      const choice = await new Promise<number>((resolve) => {
+        this.titleState = { options: ['Continue', 'New Game'], hover: -1, resolve };
+      });
+      continueGame = choice === 0;
+    } else {
+      await new Promise<number>((resolve) => {
+        this.titleState = { options: ['Begin'], hover: -1, resolve };
+      });
+    }
+    this.titleState = null;
+    if (continueGame) {
+      const loaded = loadState('auto');
+      if (loaded) this.state = loaded;
+    }
+    const spawn = continueGame ? 'restore' : this.content.startSpawn;
     await this.enterRoom(this.state.room, spawn, true);
   }
 
@@ -129,7 +143,9 @@ export class Game {
     if (spawn) {
       this.player.teleport(spawn.at[0], spawn.at[1]);
       this.player.facing = spawn.facing;
-    } else if (spawnId !== 'restore') {
+    } else if (spawnId === 'restore') {
+      if (this.state.pos) this.player.teleport(this.state.pos[0], this.state.pos[1]);
+    } else {
       console.warn(`room '${roomId}' has no spawn '${spawnId}'`);
     }
 
@@ -148,6 +164,7 @@ export class Game {
     await Promise.all(toLoad.map((k) => this.assets.load(k)));
 
     this.audio.playMusic(def.music ?? null);
+    this.state.pos = [Math.round(this.player.x), Math.round(this.player.y)];
     saveState(this.state, 'auto');
 
     await this.doFade(0, first ? 600 : 250);
@@ -180,6 +197,17 @@ export class Game {
     }
 
     if (this.activeSay && this.clock >= this.activeSay.deadline) this.finishSay();
+
+    if (this.titleState) {
+      const t = this.titleState;
+      t.hover = this.titleOptionAt(this.input.mouseX, this.input.mouseY);
+      this.input.takeKeys();
+      for (const click of this.input.takeClicks()) {
+        const idx = this.titleOptionAt(click.x, click.y);
+        if (idx >= 0) t.resolve(idx);
+      }
+      return;
+    }
 
     for (const key of this.input.takeKeys()) this.handleKey(key);
     for (const click of this.input.takeClicks()) this.handleClick(click.x, click.y, click.button);
@@ -572,10 +600,67 @@ export class Game {
 
   // ---------------------------------------------------------------- render
 
+  private titleOptionAt(x: number, y: number): number {
+    if (!this.titleState) return -1;
+    const baseY = 132;
+    for (let i = 0; i < this.titleState.options.length; i++) {
+      const oy = baseY + i * 16;
+      const w = this.font.width(this.titleState.options[i]!);
+      const ox = (W - w) / 2;
+      if (x >= ox - 6 && x <= ox + w + 6 && y >= oy - 3 && y <= oy + 11) return i;
+    }
+    return -1;
+  }
+
+  private renderTitle(ctx: CanvasRenderingContext2D): void {
+    ctx.fillStyle = '#05050f';
+    ctx.fillRect(0, 0, W, H);
+    // Deterministic starfield with a slow twinkle.
+    for (let i = 0; i < 90; i++) {
+      const x = (i * 73) % W;
+      const y = (i * 137) % (H - 60);
+      const tw = Math.sin(this.clock * 1.5 + i) * 0.5 + 0.5;
+      ctx.fillStyle = `rgba(220,225,255,${(0.25 + tw * 0.5).toFixed(2)})`;
+      ctx.fillRect(x, y, 1, 1);
+    }
+    // Moon horizon.
+    ctx.fillStyle = '#2a2a3e';
+    ctx.beginPath();
+    ctx.ellipse(W / 2, H + 70, 260, 110, 0, Math.PI, 0);
+    ctx.fill();
+
+    // Title at 2x scale via scratch upscale.
+    const title = 'CRATER EXPECTATIONS';
+    const tw = this.font.width(title);
+    const scratch = document.createElement('canvas');
+    scratch.width = tw + 4;
+    scratch.height = 14;
+    const sctx = scratch.getContext('2d')!;
+    sctx.imageSmoothingEnabled = false;
+    this.font.drawOutlined(sctx, title, 2, 2, '#ffd860');
+    ctx.imageSmoothingEnabled = false;
+    ctx.drawImage(scratch, 0, 0, scratch.width, scratch.height, Math.round(W / 2 - tw), 52, scratch.width * 2, 28);
+    this.font.draw(ctx, 'a moon base mystery', Math.round(W / 2 - this.font.width('a moon base mystery') / 2), 86, '#8888bb');
+
+    const t = this.titleState!;
+    t.options.forEach((opt, i) => {
+      const w = this.font.width(opt);
+      const color = i === t.hover ? '#ffe080' : '#b8e0c8';
+      this.font.drawOutlined(ctx, opt, Math.round((W - w) / 2), 132 + i * 16, color);
+    });
+  }
+
   private render(): void {
     const ctx = this.renderer.ctx;
     ctx.fillStyle = '#000';
     ctx.fillRect(0, 0, W, H);
+
+    if (this.titleState) {
+      this.renderTitle(ctx);
+      this.renderCursor(ctx);
+      this.renderer.present();
+      return;
+    }
 
     if (this.room) {
       const bg = this.assets.get(this.room.def.background);

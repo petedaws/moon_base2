@@ -95,6 +95,10 @@ const expect = async (cond, label) => {
 };
 
 try {
+  console.log('TITLE');
+  await click(160, 137); // "Begin" (fresh profile has no save)
+  await sleep(400);
+
   console.log('ACT 1 — badge');
   await settle(); // intro cutscene
   await click(164, 107); await settle(); // emergency kit → scissors

@@ -5,6 +5,8 @@ export interface GameState {
   room: string;
   flags: Record<string, FlagValue>;
   inventory: string[];
+  /** Player position for restoring a saved game. */
+  pos?: [number, number];
 }
 
 export const SAVE_VERSION = 1;
