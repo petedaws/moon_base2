@@ -1,0 +1,2 @@
+# bpy wheels are locked to specific Python versions: bpy 4.3.x needs Python 3.11.
+bpy==4.3.0
