@@ -1,0 +1,23 @@
+{
+  "name": "crater-expectations",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "description": "Crater Expectations — a moon base mystery adventure game",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc --noEmit && vite build",
+    "preview": "vite preview",
+    "test": "vitest run",
+    "gen:bg": "tsx tools/gen-background.ts",
+    "gen:char": "tsx tools/gen-character.ts"
+  },
+  "devDependencies": {
+    "image-q": "^4.0.0",
+    "sharp": "^0.33.5",
+    "tsx": "^4.19.0",
+    "typescript": "^5.6.0",
+    "vite": "^6.0.0",
+    "vitest": "^2.1.0"
+  }
+}

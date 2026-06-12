@@ -1,0 +1,9 @@
+node_modules/
+dist/
+.cache/
+.env
+.secrets
+*.key
+.DS_Store
+tools/__pycache__/
+tools/.venv/
