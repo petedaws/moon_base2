@@ -6,8 +6,10 @@ export const actors: Record<string, ActorDef> = {
     name: 'Pip Gibbous',
     talkColor: '#e8e8e8',
     color: '#4a78c8',
-    w: 14,
+    // 21:42 matches the 32x64 sheet cell aspect so frames aren't squashed.
+    w: 21,
     h: 42,
+    sheet: 'sprites/pip',
   },
   pumblechook: {
     id: 'pumblechook',

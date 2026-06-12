@@ -12,8 +12,8 @@
 // the Animation Library; result GLB at result.animation_glb_url).
 
 import { execFileSync } from 'node:child_process';
-import { existsSync, readFileSync } from 'node:fs';
-import { join } from 'node:path';
+import { existsSync, mkdirSync, readFileSync } from 'node:fs';
+import { dirname, join } from 'node:path';
 import { ROOT, cachePath, loadEnv, pollUntil, requireEnv, sha, writeOut } from './util';
 import { quantizeImage } from './quantize';
 
@@ -153,5 +153,6 @@ for (let d = 0; d < 4; d++) {
   }
 }
 const out = join(ROOT, `public/assets/sprites/${charId}.png`);
+mkdirSync(dirname(out), { recursive: true });
 await sheet.composite(composites).png().toFile(out);
 console.log(`done: ${out}`);
