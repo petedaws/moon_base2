@@ -6,8 +6,8 @@
 
 import sharp from 'sharp';
 import { applyPalette, buildPalette, utils } from 'image-q';
-import { existsSync, readFileSync, writeFileSync } from 'node:fs';
-import { join } from 'node:path';
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
+import { dirname, join } from 'node:path';
 import { ROOT } from './util';
 
 const PALETTE_FILE = join(ROOT, 'tools', 'palette.json');
@@ -60,6 +60,7 @@ export async function quantizeImage(
   })
     .png()
     .toBuffer();
+  mkdirSync(dirname(output), { recursive: true });
   writeFileSync(output, png);
   console.log(`quantized ${input} -> ${output} (${out.getWidth()}x${out.getHeight()})`);
 }

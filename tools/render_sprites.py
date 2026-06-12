@@ -43,9 +43,17 @@ def setup_camera(scene, target_height):
     cam_data.ortho_scale = target_height * 1.15
     cam = bpy.data.objects.new("cam", cam_data)
     scene.collection.objects.link(cam)
-    cam.location = (0, -10, target_height * 0.5)
-    cam.rotation_euler = (math.radians(90), 0, 0)
     scene.camera = cam
+    return cam
+
+
+def aim_camera(cam, target_height, yaw_deg):
+    # Orbit the camera instead of rotating the model: armature roots are
+    # keyframed by the animation, so any rotation we set there would be
+    # overwritten on frame_set.
+    yaw = math.radians(yaw_deg)
+    cam.location = (10 * math.sin(yaw), -10 * math.cos(yaw), target_height * 0.5)
+    cam.rotation_euler = (math.radians(90), 0, yaw)
 
 
 def model_root_and_height():
@@ -61,14 +69,18 @@ def render_anim(glb_path, anim_name, out_dir):
     scene = reset_scene()
     bpy.ops.import_scene.gltf(filepath=glb_path)
     roots, height = model_root_and_height()
-    setup_camera(scene, height)
+    cam = setup_camera(scene, height)
 
     frame_count = FRAME_COUNTS[anim_name]
-    anim_end = scene.frame_end if scene.frame_end > 1 else 1
+    # glTF import does not reliably set the scene frame range; take the
+    # animation length from the imported actions.
+    anim_end = max(
+        (int(a.frame_range[1]) for a in bpy.data.actions),
+        default=scene.frame_end if scene.frame_end > 1 else 1,
+    )
 
     for dir_name, yaw in DIRECTIONS.items():
-        for root in roots:
-            root.rotation_euler = (root.rotation_euler[0], root.rotation_euler[1], math.radians(yaw))
+        aim_camera(cam, height, yaw)
         for i in range(frame_count):
             frame = 1 + int((anim_end - 1) * (i / max(1, frame_count)))
             scene.frame_set(frame)

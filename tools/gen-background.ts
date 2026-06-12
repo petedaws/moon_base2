@@ -33,7 +33,11 @@ if (!roomPrompt) {
   console.error(`no prompt for room '${roomId}' in tools/prompts/rooms.json`);
   process.exit(1);
 }
-const prompt = `${style}\n\nThis room: ${roomPrompt}`;
+// Suffix fights gpt-image-1's tendency to paint the description into the
+// frame as a caption band when the room text reads like one.
+const NO_TEXT =
+  'Render the scene only. Absolutely no text anywhere in the image: no captions, no subtitles, no labels, no lettering, no watermark. Signs and posters in the scene are blank or use unreadable pictograms.';
+const prompt = `${style}\n\nThis room: ${roomPrompt}\n\n${NO_TEXT}`;
 
 const key = sha(`${MODEL}|${SIZE}|${prompt}`);
 const raw = cachePath(`bg-${roomId}-${key}`, 'png');
