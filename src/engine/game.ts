@@ -1,4 +1,4 @@
-import type { ActorDef, ActorPlacement, DialogChoice, DialogDef, ExitDef, Facing, HotspotDef, ItemDef, RoomDef, Script } from './types';
+import type { ActorDef, ActorPlacement, AmbientDef, DialogChoice, DialogDef, DoorDef, ExitDef, Facing, HotspotDef, ItemDef, RoomDef, Script } from './types';
 import { Renderer, W, H } from './renderer';
 import { Input } from './input';
 import { Assets } from './assets';
@@ -137,6 +137,7 @@ export class Game {
     const old = this.room;
     if (old?.def.onExit && !first) await old.def.onExit(this.makeCtx(null));
 
+    this.doorAnim = null;
     this.room = new Room(def);
     this.state.room = roomId;
     const spawn = def.spawns[spawnId];
@@ -159,7 +160,12 @@ export class Game {
       this.room.npcs.set(placement.actor, { actor, placement });
     }
 
-    const toLoad = [def.background, ...(def.overlays ?? []).map((o) => o.image)];
+    const toLoad = [
+      def.background,
+      ...(def.overlays ?? []).map((o) => o.image),
+      ...(def.ambients ?? []).map((a) => a.image),
+      ...(def.exits ?? []).flatMap((e) => (e.door ? [e.door.image] : [])),
+    ];
     for (const a of Object.values(this.content.actors)) if (a.sheet) toLoad.push(a.sheet);
     await Promise.all(toLoad.map((k) => this.assets.load(k)));
 
@@ -330,8 +336,19 @@ export class Game {
         });
         if (blocked) return;
       }
+      if (exit.door) await this.animateDoor(exit.door);
       await this.changeRoom(exit.to, exit.spawn);
     })();
+  }
+
+  private doorAnim: { def: DoorDef; t0: number } | null = null;
+
+  private async animateDoor(def: DoorDef): Promise<void> {
+    await this.assets.load(def.image);
+    this.doorAnim = { def, t0: this.clock };
+    this.audio.playSfx('door');
+    await new Promise((r) => setTimeout(r, def.ms ?? 420));
+    // Stays fully open through the room fade; cleared by enterRoom.
   }
 
   private talkToActor(actor: Actor, placement: ActorPlacement): void {
@@ -665,6 +682,7 @@ export class Game {
     if (this.room) {
       const bg = this.assets.get(this.room.def.background);
       if (bg) ctx.drawImage(bg, 0, 0);
+      if (this.doorAnim) this.renderDoorAnim(ctx);
 
       type Drawable = { z: number; draw: () => void };
       const drawables: Drawable[] = [];
@@ -677,6 +695,20 @@ export class Game {
         if (o.condition && !o.condition(this.state)) continue;
         const img = this.assets.get(o.image);
         if (img) drawables.push({ z: o.z, draw: () => ctx.drawImage(img, o.x, o.y) });
+      }
+      for (const a of this.room.def.ambients ?? []) {
+        const img = this.assets.get(a.image);
+        if (!img) continue;
+        const alpha = ambientAlpha(a, this.clock);
+        if (alpha < 0.02) continue;
+        drawables.push({
+          z: a.z,
+          draw: () => {
+            ctx.globalAlpha = alpha;
+            ctx.drawImage(img, a.x, a.y);
+            ctx.globalAlpha = 1;
+          },
+        });
       }
       drawables.sort((a, b) => a.z - b.z);
       for (const d of drawables) d.draw();
@@ -794,4 +826,50 @@ export class Game {
       ctx.fillRect(mx - 1, my - 1, 3, 3);
     }
   }
+
+  private renderDoorAnim(ctx: CanvasRenderingContext2D): void {
+    const { def, t0 } = this.doorAnim!;
+    const img = this.assets.get(def.image);
+    if (!img) return;
+    const p = Math.min(1, ((this.clock - t0) * 1000) / (def.ms ?? 420));
+    const [cx, cy, cw, ch] = def.clip;
+    ctx.save();
+    ctx.beginPath();
+    ctx.rect(cx, cy, cw, ch);
+    ctx.clip();
+    // The vacated footprint reads as the dark opening behind the leaf.
+    ctx.filter = 'brightness(18%)';
+    ctx.drawImage(img, 0, 0);
+    ctx.filter = 'none';
+    ctx.drawImage(img, Math.round(def.dx * p), Math.round(def.dy * p));
+    ctx.restore();
+  }
+}
+
+function ambientAlpha(a: AmbientDef, t: number): number {
+  const period = a.period ?? 2.4;
+  const min = a.min ?? 0;
+  const max = a.max ?? 1;
+  const phase = ((t / period) % 1 + 1) % 1;
+  let v: number;
+  if (a.mode === 'pulse') {
+    v = 0.5 + 0.5 * Math.sin(phase * Math.PI * 2);
+  } else if (a.mode === 'blink') {
+    v = phase < 0.5 ? 1 : 0;
+  } else {
+    // Stepped value noise with occasional deep dropouts: fluorescent flicker.
+    const step = Math.floor(t * 11);
+    const seed = step + a.x * 53 + a.y * 97;
+    v = 0.6 + 0.4 * hash01(seed);
+    if (hash01(seed * 31 + 7) < 0.07) v *= 0.2;
+  }
+  return min + (max - min) * v;
+}
+
+function hash01(n: number): number {
+  let x = Math.imul(n | 0, 0x85ebca6b) ^ 0x9e3779b9;
+  x ^= x >>> 13;
+  x = Math.imul(x, 0xc2b2ae35);
+  x ^= x >>> 16;
+  return (x >>> 0) / 4294967296;
 }

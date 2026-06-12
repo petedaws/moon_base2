@@ -45,6 +45,39 @@ export interface ExitDef {
   condition?: Condition;
   /** Runs after the walk, before the room change. Return false to cancel. */
   onExit?: (ctx: ScriptCtx) => Promise<boolean | void>;
+  /**
+   * Door-leaf slide played before the room change: image is a full-frame
+   * cut of the leaf; it slides by (dx,dy) clipped to `clip` while its
+   * original footprint shows dark (the revealed opening).
+   */
+  door?: DoorDef;
+}
+
+export interface DoorDef {
+  image: string;
+  clip: [number, number, number, number];
+  dx: number;
+  dy: number;
+  ms?: number;
+}
+
+/**
+ * A region of the background re-drawn over it with time-varying alpha —
+ * flickering lamps, pulsing glows, blinking signs. The image is typically a
+ * brightened cut of the same pixels so full transparency is the painted
+ * baseline.
+ */
+export interface AmbientDef {
+  image: string;
+  x: number;
+  y: number;
+  /** Depth for actor sorting; 0 keeps it behind everyone (wall fixtures). */
+  z: number;
+  mode: 'flicker' | 'pulse' | 'blink';
+  /** Cycle seconds (default 2.4). */
+  period?: number;
+  min?: number;
+  max?: number;
 }
 
 export interface SpawnDef {
@@ -76,6 +109,7 @@ export interface RoomDef {
   hotspots?: HotspotDef[];
   actors?: ActorPlacement[];
   overlays?: { image: string; x: number; y: number; z: number; condition?: Condition }[];
+  ambients?: AmbientDef[];
   onEnter?: Script;
   onExit?: Script;
 }
@@ -92,6 +126,8 @@ export interface ActorDef {
   h: number;
   /** Sprite sheet asset key; placeholder rendering when absent. */
   sheet?: string;
+  /** Never draw a body — for off-screen voices that only anchor talk text. */
+  invisible?: boolean;
   walkSpeed?: number;
 }
 

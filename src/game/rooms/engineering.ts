@@ -8,7 +8,14 @@ export const engineering: RoomDef = {
   background: 'bg/engineering',
   music: 'music/reception',
   walkboxes: [{ points: [[20, 142], [300, 142], [312, 196], [8, 196]] }],
-  scale: { yTop: 142, sTop: 0.78, yBottom: 196, sBottom: 1 },
+  scale: { yTop: 142, sTop: 0.7, yBottom: 196, sBottom: 1 },
+  overlays: [
+    { image: 'fg/engineering-bench', x: 0, y: 0, z: 162 },
+  ],
+  ambients: [
+    { image: 'fg/engineering-amb-reactor', x: 0, y: 0, z: 0, mode: 'pulse', period: 3.2, min: 0.08, max: 0.5 },
+    { image: 'fg/engineering-amb-lamp', x: 0, y: 0, z: 0, mode: 'flicker', max: 0.45 },
+  ],
   spawns: {
     fromHub: { at: [30, 175], facing: 'right' },
   },

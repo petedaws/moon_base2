@@ -7,7 +7,15 @@ export const tunnels: RoomDef = {
   background: 'bg/tunnels',
   music: 'music/tunnels',
   walkboxes: [{ points: [[30, 145], [290, 145], [300, 196], [20, 196]] }],
-  scale: { yTop: 145, sTop: 0.8, yBottom: 196, sBottom: 1 },
+  scale: { yTop: 145, sTop: 0.78, yBottom: 196, sBottom: 1 },
+  overlays: [
+    { image: 'fg/tunnels-trough', x: 0, y: 0, z: 192 },
+    { image: 'fg/tunnels-couch', x: 0, y: 0, z: 196 },
+  ],
+  ambients: [
+    { image: 'fg/tunnels-amb-string-lights', x: 0, y: 0, z: 0, mode: 'pulse', period: 4.5, min: 0.08, max: 0.4 },
+    { image: 'fg/tunnels-amb-window', x: 0, y: 0, z: 0, mode: 'pulse', period: 9, max: 0.2 },
+  ],
   spawns: {
     fromCorridor: { at: [45, 170], facing: 'right' },
   },

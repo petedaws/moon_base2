@@ -8,7 +8,11 @@ export const corridor: RoomDef = {
   background: 'bg/corridor',
   music: 'music/hub',
   walkboxes: [{ points: [[20, 142], [300, 142], [312, 196], [8, 196]] }],
-  scale: { yTop: 142, sTop: 0.78, yBottom: 196, sBottom: 1 },
+  scale: { yTop: 142, sTop: 0.7, yBottom: 196, sBottom: 1 },
+  ambients: [
+    { image: 'fg/corridor-amb-light-a', x: 0, y: 0, z: 0, mode: 'flicker', max: 0.45 },
+    { image: 'fg/corridor-amb-light-b', x: 0, y: 0, z: 0, mode: 'flicker', max: 0.45 },
+  ],
   spawns: {
     fromHub: { at: [30, 175], facing: 'right' },
     fromQuarters: { at: [95, 152], facing: 'down' },

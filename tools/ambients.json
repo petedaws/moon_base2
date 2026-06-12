@@ -1,0 +1,51 @@
+{
+  "landing": [
+    { "id": "ceiling-light", "polygon": [[138,0],[238,0],[238,38],[138,38]], "mode": "flicker", "max": 0.5 }
+  ],
+  "reception": [
+    { "id": "sconce", "polygon": [[44,18],[95,18],[95,65],[44,65]], "mode": "flicker", "max": 0.5 }
+  ],
+  "hub": [
+    { "id": "skylight", "polygon": [[208,0],[305,0],[305,52],[208,52]], "mode": "pulse", "period": 7, "max": 0.3 },
+    { "id": "lamp-a", "polygon": [[12,10],[60,10],[60,52],[12,52]], "mode": "flicker", "max": 0.4 },
+    { "id": "lamp-b", "polygon": [[95,5],[140,5],[140,45],[95,45]], "mode": "flicker", "max": 0.4 },
+    { "id": "coffee-sign", "polygon": [[28,70],[64,70],[64,100],[28,100]], "mode": "blink", "period": 3.4, "max": 0.45, "brighten": 1.5 }
+  ],
+  "corridor": [
+    { "id": "light-a", "polygon": [[50,2],[105,2],[105,42],[50,42]], "mode": "flicker", "max": 0.45 },
+    { "id": "light-b", "polygon": [[143,2],[198,2],[198,42],[143,42]], "mode": "flicker", "max": 0.45 }
+  ],
+  "quarters": [
+    { "id": "lamp-a", "polygon": [[12,22],[48,22],[48,58],[12,58]], "mode": "flicker", "max": 0.5 },
+    { "id": "lamp-b", "polygon": [[222,22],[258,22],[258,58],[222,58]], "mode": "flicker", "max": 0.45 },
+    { "id": "porthole", "polygon": [[108,38],[172,38],[172,98],[108,98]], "mode": "pulse", "period": 8, "max": 0.25 }
+  ],
+  "engineering": [
+    { "id": "reactor", "polygon": [[215,40],[292,40],[292,168],[215,168]], "mode": "pulse", "period": 3.2, "min": 0.08, "max": 0.5, "brighten": 1.5 },
+    { "id": "lamp", "polygon": [[45,20],[108,20],[108,58],[45,58]], "mode": "flicker", "max": 0.45 }
+  ],
+  "lab": [
+    { "id": "tube", "polygon": [[12,12],[118,12],[118,52],[12,52]], "mode": "flicker", "max": 0.4 },
+    { "id": "porthole", "polygon": [[222,35],[280,35],[280,95],[222,95]], "mode": "pulse", "period": 6.5, "max": 0.3 }
+  ],
+  "stores": [
+    { "id": "lamp", "polygon": [[105,0],[170,0],[170,38],[105,38]], "mode": "flicker", "max": 0.4 },
+    { "id": "wrench", "polygon": [[262,110],[308,110],[308,170],[262,170]], "mode": "pulse", "period": 2.6, "min": 0.1, "max": 0.55, "brighten": 1.6 }
+  ],
+  "tunnels": [
+    { "id": "string-lights", "polygon": [[55,28],[175,28],[175,70],[55,70]], "mode": "pulse", "period": 4.5, "min": 0.08, "max": 0.4, "brighten": 1.5 },
+    { "id": "window", "polygon": [[250,55],[312,55],[312,115],[250,115]], "mode": "pulse", "period": 9, "max": 0.2 }
+  ],
+  "havisham": [
+    { "id": "sconce", "polygon": [[72,38],[115,38],[115,82],[72,82]], "mode": "flicker", "max": 0.45 },
+    { "id": "window-shaft", "polygon": [[192,28],[268,28],[268,140],[192,140]], "mode": "pulse", "period": 9, "max": 0.2 }
+  ],
+  "minehead": [
+    { "id": "lamp-a", "polygon": [[14,35],[55,35],[55,82],[14,82]], "mode": "flicker", "max": 0.5 },
+    { "id": "lamp-b", "polygon": [[125,58],[172,58],[172,100],[125,100]], "mode": "flicker", "max": 0.45 }
+  ],
+  "doorchamber": [
+    { "id": "glyphs", "circle": [175, 82, 72, 50], "mode": "pulse", "period": 4.2, "min": 0.12, "max": 0.5, "brighten": 1.45 },
+    { "id": "torch", "polygon": [[14,50],[52,50],[52,100],[14,100]], "mode": "flicker", "max": 0.55 }
+  ]
+}

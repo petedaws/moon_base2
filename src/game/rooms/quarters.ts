@@ -8,6 +8,11 @@ export const quarters: RoomDef = {
   music: 'music/hub',
   walkboxes: [{ points: [[70, 150], [250, 150], [262, 196], [58, 196]] }],
   scale: { yTop: 150, sTop: 0.85, yBottom: 196, sBottom: 1 },
+  ambients: [
+    { image: 'fg/quarters-amb-lamp-a', x: 0, y: 0, z: 0, mode: 'flicker', max: 0.5 },
+    { image: 'fg/quarters-amb-lamp-b', x: 0, y: 0, z: 0, mode: 'flicker', max: 0.45 },
+    { image: 'fg/quarters-amb-porthole', x: 0, y: 0, z: 0, mode: 'pulse', period: 8, max: 0.25 },
+  ],
   spawns: {
     fromCorridor: { at: [160, 188], facing: 'up' },
   },

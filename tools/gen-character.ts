@@ -134,8 +134,8 @@ execFileSync('python3', [
 // Stage 6: quantize frames + pack the sheet (4 rows × 9 cols, cell 32x64).
 console.log('stage 6: packing sheet...');
 const sharp = (await import('sharp')).default;
-const CELL_W = 32;
-const CELL_H = 64;
+const CELL_W = 64;
+const CELL_H = 128;
 const COLS = 9; // idle ×1, walk ×6, talk ×2
 const DIRS = ['down', 'left', 'right', 'up'];
 const sheet = sharp({

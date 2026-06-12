@@ -106,9 +106,9 @@ try {
   await useOn('scissors', 222, 135); // crate → toner
   await expect((s) => s.inv.includes('toner'), 'got toner');
   await go(310, 150, 'reception');
-  await click(170, 120); // talk to Pumblechook
+  await click(245, 120); // talk to Pumblechook (guarding the security door)
   await pick('Hi! I'); await pick('Can I head'); await pick('So print me'); await endDialog(`I'll see what`);
-  await useOn('toner', 170, 120); // badge ceremony
+  await useOn('toner', 245, 120); // badge ceremony
   await expect((s) => s.inv.includes('badge'), 'badge printed');
   await go(310, 170, 'hub');
 
@@ -116,14 +116,14 @@ try {
   await go(310, 120, 'engineering');
   await click(190, 140); await pick('Hi! Pip'); await pick(`Could I borrow`); await endDialog('See you');
   await go(10, 150, 'hub');
-  await go(265, 110, 'stores');
+  await go(275, 110, 'stores');
   await click(165, 120); await pick('Hello!'); await pick('I need a heating coil'); await endDialog(`I'll come back`);
   await go(160, 195, 'hub');
   await go(10, 150, 'reception');
-  await click(170, 120); await pick('Could I have a blank'); await endDialog(`I'd better go`);
+  await click(245, 120); await pick('Could I have a blank'); await endDialog(`I'd better go`);
   await expect((s) => s.inv.includes('form'), 'got Form RQ-7');
   await go(310, 150, 'hub');
-  await go(265, 110, 'stores');
+  await go(275, 110, 'stores');
   await click(165, 120); await pick('I need a heating coil'); await endDialog(`I'll come back`);
   await expect((s) => s.inv.includes('coil'), 'got heating coil');
   await go(160, 195, 'hub');
@@ -133,7 +133,7 @@ try {
   await click(190, 140); await pick(`Could I borrow`); await endDialog('See you');
   await expect((s) => s.inv.includes('driver'), 'got multidriver');
   await go(10, 150, 'hub');
-  await go(75, 110, 'corridor');
+  await go(108, 110, 'corridor');
   await useOn('driver', 216, 118); // open vent
   await expect((s) => s.flags.includes('ventOpen'), 'vent open');
   await go(216, 118, 'tunnels');
@@ -146,21 +146,21 @@ try {
   await go(10, 150, 'corridor');
   await go(10, 150, 'hub');
   await go(10, 150, 'reception');
-  await click(170, 120); await pick('Did you know there are 600');
+  await click(245, 120); await pick('Did you know there are 600');
   await settle();
   await click(204, 128); await settle(); // take paperweight
   await expect((s) => s.inv.includes('paperweight'), 'key 1: paperweight');
   await go(310, 150, 'hub');
-  await go(265, 110, 'stores');
+  await go(275, 110, 'stores');
   await click(165, 120); await pick('The hub coffee machine is fixed');
   await settle();
   await go(160, 195, 'hub');
   await click(110, 150); await pick('Wemmick? Is that you'); await pick('About Joe'); await endDialog('Enjoy the break');
-  await go(265, 110, 'stores');
+  await go(275, 110, 'stores');
   await click(260, 110); await settle(); // cage with code
   await expect((s) => s.inv.includes('wrench'), 'key 2: lucky wrench');
   await go(160, 195, 'hub');
-  await go(145, 110, 'lab');
+  await go(178, 110, 'lab');
   await click(220, 140); await pick('Hi! Pip Gibbous! I'); await pick('Xenoglyphology'); await endDialog(`I'll let you`);
   await useOn('rubbings', 220, 140); // → escorted to Havisham
   for (let i = 0; i < 50; i++) {
@@ -169,12 +169,12 @@ try {
     await sleep(150);
   }
   await expect((s) => s.room === 'havisham', 'escorted to administration');
-  await useOn('mint', 230, 145); // the mint gambit
+  await useOn('mint', 272, 150); // the mint gambit
   await expect((s) => s.flags.includes('minerClearance'), 'miner clearance granted');
   await click(172, 125); await settle(); // take stirrer from cake
   await expect((s) => s.inv.includes('stirrer'), 'key 3: cake stirrer');
   await go(10, 150, 'hub');
-  await go(145, 110, 'lab');
+  await go(178, 110, 'lab');
   await click(220, 140); await pick('So what do the glyphs actually'); await endDialog(`I'll let you`);
   await expect((s) => s.flags.includes('knowsKeyOrder'), 'key order known');
 
