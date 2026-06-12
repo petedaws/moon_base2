@@ -8,7 +8,7 @@ import { Room, type HitTarget } from './room';
 import { newGameState, saveState, loadState, type GameState, type FlagValue } from './state';
 import type { ScriptCtx } from './script';
 import { runDialog } from './dialog';
-import { AudioEngine } from './audio';
+import { AudioEngine, type Sfx, type Song } from './audio';
 import type { Pt } from './geom';
 
 export interface GameContent {
@@ -21,6 +21,8 @@ export interface GameContent {
   startSpawn: string;
   /** Quip pools for unscripted interactions; picked deterministically per target. */
   defaults: { look: string[]; use: string[]; useItem: string[]; talk: string[] };
+  music?: Record<string, Song>;
+  sfx?: Record<string, Sfx>;
 }
 
 interface Fade {
@@ -79,6 +81,7 @@ export class Game {
     const pdef = content.actors[content.player];
     if (!pdef) throw new Error(`player actor '${content.player}' not defined`);
     this.player = new Actor(pdef, W / 2, H - 30);
+    this.audio.setLibrary(content.music ?? {}, content.sfx ?? {});
     canvas.parentElement?.addEventListener('mousedown', () => this.audio.unlock(), { once: true });
   }
 

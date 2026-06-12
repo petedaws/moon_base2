@@ -6,6 +6,8 @@ import { reception } from './rooms/reception';
 import { hub } from './rooms/hub';
 import { pumblechookDialog } from './dialogs/pumblechook';
 import { biddyDialog } from './dialogs/biddy';
+import { music } from './music';
+import { sfx } from './sfx';
 
 export const content: GameContent = {
   rooms: {
@@ -19,6 +21,8 @@ export const content: GameContent = {
   },
   actors,
   items,
+  music,
+  sfx,
   player: 'pip',
   startRoom: 'landing',
   startSpawn: 'start',
