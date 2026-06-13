@@ -11,6 +11,7 @@ export const stores: RoomDef = {
   scale: { yTop: 142, sTop: 0.7, yBottom: 196, sBottom: 1 },
   overlays: [
     { image: 'fg/stores-counter', x: 0, y: 0, z: 178 },
+    { image: 'fg/stores-shelf', x: 0, y: 0, z: 170 },
   ],
   ambients: [
     { image: 'fg/stores-amb-lamp', x: 0, y: 0, z: 0, mode: 'flicker', max: 0.4 },

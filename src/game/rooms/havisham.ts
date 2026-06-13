@@ -12,6 +12,8 @@ export const havisham: RoomDef = {
   overlays: [
     { image: 'fg/havisham-table', x: 0, y: 0, z: 192 },
     { image: 'fg/havisham-chair', x: 0, y: 0, z: 187 },
+    { image: 'fg/havisham-sidetable', x: 0, y: 0, z: 156 },
+    { image: 'fg/havisham-grandclock', x: 0, y: 0, z: 185 },
   ],
   ambients: [
     { image: 'fg/havisham-amb-sconce', x: 0, y: 0, z: 0, mode: 'flicker', max: 0.45 },
