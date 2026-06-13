@@ -43,8 +43,19 @@ def reset_scene():
     scene.render.film_transparent = True
     scene.render.resolution_x = RES // 2
     scene.render.resolution_y = RES
-    scene.display.shading.light = "FLAT"
-    scene.display.shading.color_type = "TEXTURE"
+    # Studio lighting + cavity (screen-space AO + curvature) gives the figures
+    # real form — folds, edges, and volume read instead of looking flat — so
+    # they sit in the rendered backgrounds rather than on top of them. Cast
+    # shadows stay off (they look harsh on an isolated sprite); cavity carries
+    # the definition.
+    sh = scene.display.shading
+    sh.light = "STUDIO"
+    sh.color_type = "TEXTURE"
+    sh.show_cavity = True
+    sh.cavity_type = "BOTH"
+    sh.curvature_ridge_factor = 0.7
+    sh.curvature_valley_factor = 1.0
+    sh.show_object_outline = False
     return scene
 
 
