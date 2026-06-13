@@ -712,6 +712,13 @@ export class Game {
       }
       drawables.sort((a, b) => a.z - b.z);
       for (const d of drawables) d.draw();
+
+      // Disappear-guard: if foreground occluders hide most of the player,
+      // draw a faint silhouette over them so they're never fully lost.
+      const covered = this.playerCovered();
+      if (covered > 0.55) {
+        this.player.drawSilhouette(ctx, this.sheetFor(this.player), 0.3);
+      }
     }
 
     this.debugHook?.(this, ctx);
@@ -734,6 +741,57 @@ export class Game {
 
   private sheetFor(actor: Actor): HTMLCanvasElement | HTMLImageElement | undefined {
     return actor.def.sheet ? this.assets.get(actor.def.sheet) : undefined;
+  }
+
+  // Cached per-overlay alpha (320×200, one byte per pixel), built once on first
+  // use so occlusion coverage can be sampled without re-reading pixels.
+  private alphaMaps = new Map<string, Uint8Array>();
+
+  private alphaMap(key: string, img: HTMLCanvasElement | HTMLImageElement): Uint8Array {
+    let m = this.alphaMaps.get(key);
+    if (m) return m;
+    const c = document.createElement('canvas');
+    c.width = W;
+    c.height = H;
+    const cx = c.getContext('2d')!;
+    cx.drawImage(img, 0, 0);
+    const data = cx.getImageData(0, 0, W, H).data;
+    m = new Uint8Array(W * H);
+    for (let i = 0; i < W * H; i++) m[i] = data[i * 4 + 3]!;
+    this.alphaMaps.set(key, m);
+    return m;
+  }
+
+  /** Fraction of the player's upper body hidden by in-front foreground cuts. */
+  private playerCovered(): number {
+    if (!this.room) return 0;
+    const maps: Uint8Array[] = [];
+    for (const o of this.room.def.overlays ?? []) {
+      if (o.z <= this.player.y) continue; // only occluders that sort in front
+      if (o.condition && !o.condition(this.state)) continue;
+      const img = this.assets.get(o.image);
+      if (img) maps.push(this.alphaMap(o.image, img));
+    }
+    if (!maps.length) return 0;
+    const b = this.player.bounds();
+    const x0 = Math.max(0, Math.floor(b.x));
+    const x1 = Math.min(W - 1, Math.ceil(b.x + b.w));
+    const y0 = Math.max(0, Math.floor(b.y));
+    const y1 = Math.min(H - 1, Math.ceil(b.y + b.h * 0.72));
+    let total = 0;
+    let covered = 0;
+    for (let y = y0; y <= y1; y += 2) {
+      for (let x = x0; x <= x1; x += 2) {
+        total++;
+        for (const m of maps) {
+          if (m[y * W + x]! > 128) {
+            covered++;
+            break;
+          }
+        }
+      }
+    }
+    return total ? covered / total : 0;
   }
 
   private dialogChoiceAt(x: number, y: number): number {
