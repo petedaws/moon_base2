@@ -131,24 +131,96 @@ execFileSync('python3', [
   '--talk', animFiles.talk!,
 ], { stdio: 'inherit' });
 
-// Stage 6: quantize frames + pack the sheet (4 rows × 9 cols, cell 32x64).
+// Stage 6: pack the sheet (4 rows × 9 cols, cell 64x128).
+//
+// Blender's scene bbox can't be trusted for framing (Meshy GLBs carry
+// geometry below the feet), so measure the union of opaque pixels across
+// every rendered frame and crop all frames with one shared, bottom-anchored
+// window: the character fills the cell, feet sit on the cell bottom, and
+// scale is identical in every frame so nothing pops between animations.
 console.log('stage 6: packing sheet...');
 const sharp = (await import('sharp')).default;
-const CELL_W = 64;
-const CELL_H = 128;
+const CELL_H = 128; // cell width is per-character, from the frame aspect
 const COLS = 9; // idle ×1, walk ×6, talk ×2
 const DIRS = ['down', 'left', 'right', 'up'];
+
+const frameNames: string[][] = DIRS.map((d) => [
+  `idle-${d}-0`,
+  ...[0, 1, 2, 3, 4, 5].map((i) => `walk-${d}-${i}`),
+  ...[0, 1].map((i) => `talk-${d}-${i}`),
+]);
+
+// Per-frame opaque bboxes. The walk animation carries horizontal root
+// motion, so frames must be re-centered horizontally on their own bbox;
+// the vertical window and scale stay shared (bob is real motion, and a
+// shared scale means nothing pops between frames).
+type Box = { l: number; t: number; r: number; b: number };
+const boxes = new Map<string, Box>();
+let uT = Infinity, uB = -1, maxW = 0;
+for (const f of frameNames.flat()) {
+  const fpath = join(framesDir, `${f}.png`);
+  if (!existsSync(fpath)) continue;
+  const { data, info } = await sharp(fpath).raw().toBuffer({ resolveWithObject: true });
+  let l = Infinity, t = Infinity, r = -1, b = -1;
+  for (let y = 0; y < info.height; y++) {
+    for (let x = 0; x < info.width; x++) {
+      if (data[(y * info.width + x) * 4 + 3]! >= 64) {
+        if (x < l) l = x;
+        if (x > r) r = x;
+        if (y < t) t = y;
+        if (y > b) b = y;
+      }
+    }
+  }
+  if (r < 0) continue;
+  boxes.set(f, { l, t, r, b });
+  if (t < uT) uT = t;
+  if (b > uB) uB = b;
+  if (r - l + 1 > maxW) maxW = r - l + 1;
+}
+if (uB < 0) throw new Error('no opaque pixels in rendered frames');
+// Bottom-anchored shared window at the character's natural aspect; pad
+// below the feet maps to ~1 cell px so feet land on the actor's anchor.
+const PAD = 3;
+const cropH = uB - uT + 1 + 2 * PAD;
+const cropW = maxW + 2 * PAD;
+const CELL_W = Math.round((CELL_H * cropW) / cropH);
+const cropBottom = uB + PAD;
+const cropTop = cropBottom - cropH + 1;
+console.log(
+  `frames y ${uT}..${uB}, max width ${maxW} -> window ${cropW}x${cropH}, cell ${CELL_W}x${CELL_H}, def aspect w = h * ${(CELL_W / CELL_H).toFixed(3)}`,
+);
+
 const sheet = sharp({
   create: { width: CELL_W * COLS, height: CELL_H * 4, channels: 4, background: { r: 0, g: 0, b: 0, alpha: 0 } },
 });
 const composites: { input: string; left: number; top: number }[] = [];
 for (let d = 0; d < 4; d++) {
-  const frames = [`idle-${DIRS[d]}-0`, ...[0, 1, 2, 3, 4, 5].map((i) => `walk-${DIRS[d]}-${i}`), ...[0, 1].map((i) => `talk-${DIRS[d]}-${i}`)];
-  for (let c = 0; c < frames.length; c++) {
-    const fpath = join(framesDir, `${frames[c]}.png`);
-    if (!existsSync(fpath)) continue;
-    const q = join(framesDir, `${frames[c]}-q.png`);
-    await quantizeImage(fpath, q, CELL_W, CELL_H);
+  for (let c = 0; c < frameNames[d]!.length; c++) {
+    const name = frameNames[d]![c]!;
+    const box = boxes.get(name);
+    if (!box) continue;
+    const cropLeft = Math.round((box.l + box.r) / 2 - cropW / 2);
+    const cropped = join(framesDir, `${name}-crop.png`);
+    // extend with transparent margins so the extract window never leaves
+    // the source frame, whatever the per-frame centering needs
+    await sharp(join(framesDir, `${name}.png`))
+      .extend({
+        top: Math.max(0, -cropTop),
+        bottom: Math.max(0, cropBottom + 1 - 256),
+        left: Math.max(0, -cropLeft),
+        right: Math.max(0, cropLeft + cropW - 128),
+        background: { r: 0, g: 0, b: 0, alpha: 0 },
+      })
+      .extract({
+        left: cropLeft + Math.max(0, -cropLeft),
+        top: cropTop + Math.max(0, -cropTop),
+        width: cropW,
+        height: cropH,
+      })
+      .toFile(cropped);
+    const q = join(framesDir, `${name}-q.png`);
+    await quantizeImage(cropped, q, CELL_W, CELL_H);
     composites.push({ input: q, left: c * CELL_W, top: d * CELL_H });
   }
 }

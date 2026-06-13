@@ -7,10 +7,11 @@ export const doorchamber: RoomDef = {
   name: 'The Door',
   background: 'bg/doorchamber',
   music: 'music/door',
-  walkboxes: [{ points: [[40, 150], [280, 150], [290, 196], [30, 196]] }],
+  walkboxes: [{ points: [[40, 150], [206, 150], [206, 196], [30, 196]] }],
   scale: { yTop: 150, sTop: 0.6, yBottom: 196, sBottom: 1 },
   overlays: [
-    { image: 'fg/doorchamber-camp', x: 0, y: 0, z: 192 },
+    { image: 'fg/doorchamber-chairs', x: 0, y: 0, z: 192 },
+    { image: 'fg/doorchamber-tripod', x: 0, y: 0, z: 192 },
   ],
   ambients: [
     { image: 'fg/doorchamber-amb-glyphs', x: 0, y: 0, z: 0, mode: 'pulse', period: 4.2, min: 0.12, max: 0.5 },

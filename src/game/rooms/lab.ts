@@ -7,7 +7,7 @@ export const lab: RoomDef = {
   name: 'Xenoglyph Lab',
   background: 'bg/lab',
   music: 'music/reception',
-  walkboxes: [{ points: [[20, 142], [300, 142], [312, 196], [8, 196]] }],
+  walkboxes: [{ points: [[102, 142], [300, 142], [300, 152], [102, 152]] }, { points: [[214, 142], [300, 142], [312, 196], [214, 196]] }, { points: [[8, 176], [312, 176], [312, 196], [8, 196]] }],
   scale: { yTop: 142, sTop: 0.7, yBottom: 196, sBottom: 1 },
   overlays: [
     { image: 'fg/lab-scanner', x: 0, y: 0, z: 164 },

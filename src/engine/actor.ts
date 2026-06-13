@@ -128,17 +128,19 @@ export class Actor {
   }
 
   /**
-   * Sprite sheets: 4 rows (down/left/right/up), fixed-width frame columns:
-   * col 0 idle, cols 1-6 walk, cols 7-8 talk. Frame cell = sheet.height/4 tall.
+   * Sprite sheets: 4 rows (down/left/right/up) × 9 columns: col 0 idle,
+   * cols 1-6 walk, cols 7-8 talk. Cell size comes from the sheet dimensions,
+   * so each character's sheet can use its own natural aspect; actor defs
+   * should keep w/h near the cell aspect to avoid distortion.
    */
   private drawSheet(
     ctx: CanvasRenderingContext2D,
     sheet: HTMLCanvasElement | HTMLImageElement,
     b: { x: number; y: number; w: number; h: number },
   ): void {
+    const cols = 9;
     const cellH = sheet.height / 4;
-    const cellW = cellH / 2;
-    const cols = Math.round(sheet.width / cellW);
+    const cellW = sheet.width / cols;
     const row = { down: 0, left: 1, right: 2, up: 3 }[this.facing];
     let col = 0;
     if (this.walking) col = 1 + (Math.floor(this.animTime * 9) % Math.min(6, cols - 1));

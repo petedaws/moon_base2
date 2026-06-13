@@ -7,7 +7,7 @@ export const reception: RoomDef = {
   name: 'Reception',
   background: 'bg/reception',
   music: 'music/reception',
-  walkboxes: [{ points: [[20, 142], [300, 142], [312, 196], [8, 196]] }],
+  walkboxes: [{ points: [[20, 142], [68, 142], [68, 196], [8, 196]] }, { points: [[230, 142], [300, 142], [312, 196], [230, 196]] }, { points: [[8, 158], [312, 158], [312, 196], [8, 196]] }],
   scale: { yTop: 142, sTop: 0.7, yBottom: 196, sBottom: 1 },
   overlays: [
     { image: 'fg/reception-desk', x: 0, y: 0, z: 152 },

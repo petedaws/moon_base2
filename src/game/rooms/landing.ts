@@ -7,7 +7,7 @@ export const landing: RoomDef = {
   name: 'Landing Bay',
   background: 'bg/landing',
   music: 'music/landing',
-  walkboxes: [{ points: [[30, 145], [290, 145], [312, 196], [8, 196]] }],
+  walkboxes: [{ points: [[30, 145], [148, 145], [148, 196], [8, 196]] }, { points: [[224, 145], [290, 145], [312, 196], [224, 196]] }, { points: [[146, 174], [226, 174], [226, 196], [146, 196]] }],
   scale: { yTop: 145, sTop: 0.7, yBottom: 196, sBottom: 1 },
   overlays: [
     { image: 'fg/landing-crate', x: 0, y: 0, z: 170 },

@@ -6,10 +6,10 @@ export const actors: Record<string, ActorDef> = {
     name: 'Pip Gibbous',
     talkColor: '#e8e8e8',
     color: '#4a78c8',
-    // w = h/2 matches the sheet cell aspect so frames aren't squashed;
-    // heights sized against the painted door/architecture scale in the rooms.
-    w: 36,
-    h: 72,
+    // h sized against the painted architecture; w = h * the sheet's natural
+    // cell aspect (printed by gen-character) so frames aren't distorted.
+    w: 51,
+    h: 80,
     sheet: 'sprites/pip',
   },
   pumblechook: {
@@ -17,8 +17,8 @@ export const actors: Record<string, ActorDef> = {
     name: 'Officer Pumblechook',
     talkColor: '#f0a868',
     color: '#8a5a30',
-    w: 38,
-    h: 76,
+    w: 50,
+    h: 84,
     sheet: 'sprites/pumblechook',
   },
   joe: {
@@ -26,8 +26,8 @@ export const actors: Record<string, ActorDef> = {
     name: 'Joe',
     talkColor: '#f0c860',
     color: '#c87830',
-    w: 39,
-    h: 78,
+    w: 54,
+    h: 88,
     sheet: 'sprites/joe',
   },
   estella: {
@@ -35,8 +35,8 @@ export const actors: Record<string, ActorDef> = {
     name: 'Dr. Estella',
     talkColor: '#c8b8f8',
     color: '#e8e8f0',
-    w: 37,
-    h: 74,
+    w: 44,
+    h: 82,
     sheet: 'sprites/estella',
   },
   wemmick: {
@@ -44,8 +44,8 @@ export const actors: Record<string, ActorDef> = {
     name: 'Quartermaster Wemmick',
     talkColor: '#a8d8a8',
     color: '#607060',
-    w: 36,
-    h: 72,
+    w: 49,
+    h: 78,
     sheet: 'sprites/wemmick',
   },
   magwitch: {
@@ -53,8 +53,8 @@ export const actors: Record<string, ActorDef> = {
     name: 'Magwitch',
     talkColor: '#d8a888',
     color: '#5a4a40',
-    w: 38,
-    h: 76,
+    w: 54,
+    h: 84,
     sheet: 'sprites/magwitch',
   },
   havisham: {
@@ -62,8 +62,8 @@ export const actors: Record<string, ActorDef> = {
     name: 'Ms. Havisham',
     talkColor: '#f8e8c8',
     color: '#b0a890',
-    w: 33,
-    h: 66,
+    w: 36,
+    h: 70,
     sheet: 'sprites/havisham',
   },
   // BIDDY speaks through intercom panels; this "actor" is only used so the

@@ -7,7 +7,7 @@ export const engineering: RoomDef = {
   name: 'Engineering Bay',
   background: 'bg/engineering',
   music: 'music/reception',
-  walkboxes: [{ points: [[20, 142], [300, 142], [312, 196], [8, 196]] }],
+  walkboxes: [{ points: [[126, 142], [300, 142], [312, 196], [126, 196]] }, { points: [[8, 166], [312, 166], [312, 196], [8, 196]] }],
   scale: { yTop: 142, sTop: 0.7, yBottom: 196, sBottom: 1 },
   overlays: [
     { image: 'fg/engineering-bench', x: 0, y: 0, z: 162 },

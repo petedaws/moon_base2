@@ -21,6 +21,13 @@ except ImportError:
     sys.exit("bpy not installed. Run: pip install -r tools/requirements.txt")
 
 FRAME_COUNTS = {"walk": 6, "idle": 1, "talk": 2}
+# Cycle-relative sample points. Walk spreads evenly; idle samples mid-cycle
+# (clip starts can catch a transition pose); talk samples gesture extremes.
+FRAME_OFFSETS = {
+    "walk": [i / 6 for i in range(6)],
+    "idle": [0.4],
+    "talk": [0.25, 0.75],
+}
 DIRECTIONS = {"down": 0, "left": 90, "right": 270, "up": 180}  # model yaw degrees
 RES = 256
 
@@ -99,7 +106,7 @@ def render_anim(glb_path, anim_name, out_dir):
     for dir_name, yaw in DIRECTIONS.items():
         aim_camera(cam, center, yaw)
         for i in range(frame_count):
-            frame = 1 + int((anim_end - 1) * (i / max(1, frame_count)))
+            frame = 1 + int((anim_end - 1) * FRAME_OFFSETS[anim_name][i])
             scene.frame_set(frame)
             scene.render.filepath = f"{out_dir}/{anim_name}-{dir_name}-{i}.png"
             bpy.ops.render.render(write_still=True)
