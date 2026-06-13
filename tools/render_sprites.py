@@ -30,6 +30,10 @@ FRAME_OFFSETS = {
 }
 DIRECTIONS = {"down": 0, "left": 90, "right": 270, "up": 180}  # model yaw degrees
 RES = 256
+# Downward camera tilt (classic 3/4 adventure-game view). A level camera can't
+# show the depth-axis leg motion in the toward/away walk cycles, so they look
+# static; tilting the camera down makes the stride read in every direction.
+TILT = math.radians(28)
 
 
 def reset_scene():
@@ -47,7 +51,9 @@ def reset_scene():
 def setup_camera(scene, target_height):
     cam_data = bpy.data.cameras.new("cam")
     cam_data.type = "ORTHO"
-    cam_data.ortho_scale = target_height * 1.15
+    # Extra slack: the tilt makes the figure occupy more vertical view space
+    # (top of head + foreshortened body); the packer crops the surplus back.
+    cam_data.ortho_scale = target_height * 1.35
     cam = bpy.data.objects.new("cam", cam_data)
     scene.collection.objects.link(cam)
     scene.camera = cam
@@ -57,10 +63,16 @@ def setup_camera(scene, target_height):
 def aim_camera(cam, center, yaw_deg):
     # Orbit the camera instead of rotating the model: armature roots are
     # keyframed by the animation, so any rotation we set there would be
-    # overwritten on frame_set.
+    # overwritten on frame_set. The orbit is pitched down by TILT — horizontal
+    # reach shrinks by cos(TILT) and the camera rises by sin(TILT).
     yaw = math.radians(yaw_deg)
-    cam.location = (center[0] + 10 * math.sin(yaw), center[1] - 10 * math.cos(yaw), center[2])
-    cam.rotation_euler = (math.radians(90), 0, yaw)
+    d = 10
+    cam.location = (
+        center[0] + d * math.cos(TILT) * math.sin(yaw),
+        center[1] - d * math.cos(TILT) * math.cos(yaw),
+        center[2] + d * math.sin(TILT),
+    )
+    cam.rotation_euler = (math.radians(90) - TILT, 0, yaw)
 
 
 def mesh_bounds():
