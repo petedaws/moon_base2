@@ -1,7 +1,15 @@
 // Image loader with synthesized placeholders so the game runs before any
-// art exists. Keys map to /assets/<key>.png.
+// art exists. Keys map to /assets/<key>.png, unless a single-file build has
+// supplied inline data URIs (see tools/build-single-file.ts).
 
 const PLACEHOLDER_COLORS = ['#1d2b53', '#3b2d4f', '#26433f', '#4a3429', '#2d3a52'];
+
+/** Populated by the single-file build: asset key -> data: URI. */
+declare global {
+  interface Window {
+    __INLINE_ASSETS?: Record<string, string>;
+  }
+}
 
 export class Assets {
   private images = new Map<string, HTMLCanvasElement | HTMLImageElement>();
@@ -10,7 +18,8 @@ export class Assets {
     const cached = this.images.get(key);
     if (cached) return cached;
     try {
-      const img = await loadImage(`${import.meta.env.BASE_URL}assets/${key}.png`);
+      const inline = window.__INLINE_ASSETS?.[key];
+      const img = await loadImage(inline ?? `${import.meta.env.BASE_URL}assets/${key}.png`);
       this.images.set(key, img);
       return img;
     } catch {
