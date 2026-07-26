@@ -98,6 +98,7 @@ export class Actor {
   draw(ctx: CanvasRenderingContext2D, sheet?: HTMLCanvasElement | HTMLImageElement): void {
     if (this.def.invisible) return;
     const b = this.bounds();
+    this.drawShadow(ctx, b);
     if (sheet) {
       this.drawSheet(ctx, sheet, b);
       return;
@@ -127,23 +128,51 @@ export class Actor {
     }
   }
 
+  /** Soft contact shadow on the floor at the feet — grounds the sprite so it
+   *  reads as standing in the scene rather than pasted over it. */
+  private drawShadow(ctx: CanvasRenderingContext2D, b: { x: number; y: number; w: number; h: number }): void {
+    const cx = b.x + b.w / 2;
+    const cy = this.y - 1;
+    const rx = Math.max(3, b.w * 0.42);
+    const ry = Math.max(1.5, rx * 0.32);
+    ctx.save();
+    ctx.globalAlpha = 0.28;
+    ctx.fillStyle = '#000';
+    ctx.beginPath();
+    ctx.ellipse(cx, cy, rx, ry, 0, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.restore();
+  }
+
   /**
-   * Sprite sheets: 4 rows (down/left/right/up), fixed-width frame columns:
-   * col 0 idle, cols 1-6 walk, cols 7-8 talk. Frame cell = sheet.height/4 tall.
+   * Sprite sheets: 4 rows (down/left/right/up) × 9 columns: col 0 idle,
+   * cols 1-6 walk, cols 7-8 talk. Cell size comes from the sheet dimensions,
+   * so each character's sheet can use its own natural aspect; actor defs
+   * should keep w/h near the cell aspect to avoid distortion.
    */
   private drawSheet(
     ctx: CanvasRenderingContext2D,
     sheet: HTMLCanvasElement | HTMLImageElement,
     b: { x: number; y: number; w: number; h: number },
   ): void {
+    const cols = 9;
     const cellH = sheet.height / 4;
-    const cellW = cellH / 2;
-    const cols = Math.round(sheet.width / cellW);
+    const cellW = sheet.width / cols;
     const row = { down: 0, left: 1, right: 2, up: 3 }[this.facing];
     let col = 0;
     if (this.walking) col = 1 + (Math.floor(this.animTime * 9) % Math.min(6, cols - 1));
     else if (this.talkText !== null && cols > 8) col = 7 + (Math.floor(this.animTime * 6) % 2);
     ctx.drawImage(sheet, col * cellW, row * cellH, cellW, cellH, Math.round(b.x), Math.round(b.y), Math.round(b.w), Math.round(b.h));
+  }
+
+  /** Faint sprite drawn over foreground occluders so a fully-hidden actor is
+   *  never completely lost (classic "ghost" behind tall props). */
+  drawSilhouette(ctx: CanvasRenderingContext2D, sheet: HTMLCanvasElement | HTMLImageElement | undefined, alpha: number): void {
+    if (this.def.invisible || !sheet) return;
+    ctx.save();
+    ctx.globalAlpha = alpha;
+    this.drawSheet(ctx, sheet, this.bounds());
+    ctx.restore();
   }
 
   drawTalkText(ctx: CanvasRenderingContext2D, font: Font): void {

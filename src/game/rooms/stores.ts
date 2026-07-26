@@ -7,10 +7,11 @@ export const stores: RoomDef = {
   name: 'Quartermaster Stores',
   background: 'bg/stores',
   music: 'music/reception',
-  walkboxes: [{ points: [[20, 142], [300, 142], [312, 196], [8, 196]] }],
+  walkboxes: [{ points: [[20, 142], [300, 142], [300, 147], [20, 147]] }, { points: [[20, 142], [78, 142], [78, 196], [8, 196]] }, { points: [[214, 142], [300, 142], [312, 196], [214, 196]] }, { points: [[8, 182], [312, 182], [312, 196], [8, 196]] }],
   scale: { yTop: 142, sTop: 0.7, yBottom: 196, sBottom: 1 },
   overlays: [
     { image: 'fg/stores-counter', x: 0, y: 0, z: 178 },
+    { image: 'fg/stores-shelf', x: 0, y: 0, z: 170 },
   ],
   ambients: [
     { image: 'fg/stores-amb-lamp', x: 0, y: 0, z: 0, mode: 'flicker', max: 0.4 },

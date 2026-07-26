@@ -21,8 +21,19 @@ except ImportError:
     sys.exit("bpy not installed. Run: pip install -r tools/requirements.txt")
 
 FRAME_COUNTS = {"walk": 6, "idle": 1, "talk": 2}
+# Cycle-relative sample points. Walk spreads evenly; idle samples mid-cycle
+# (clip starts can catch a transition pose); talk samples gesture extremes.
+FRAME_OFFSETS = {
+    "walk": [i / 6 for i in range(6)],
+    "idle": [0.4],
+    "talk": [0.25, 0.75],
+}
 DIRECTIONS = {"down": 0, "left": 90, "right": 270, "up": 180}  # model yaw degrees
 RES = 256
+# Downward camera tilt (classic 3/4 adventure-game view). A level camera can't
+# show the depth-axis leg motion in the toward/away walk cycles, so they look
+# static; tilting the camera down makes the stride read in every direction.
+TILT = math.radians(28)
 
 
 def reset_scene():
@@ -32,15 +43,28 @@ def reset_scene():
     scene.render.film_transparent = True
     scene.render.resolution_x = RES // 2
     scene.render.resolution_y = RES
-    scene.display.shading.light = "FLAT"
-    scene.display.shading.color_type = "TEXTURE"
+    # Studio lighting + cavity (screen-space AO + curvature) gives the figures
+    # real form — folds, edges, and volume read instead of looking flat — so
+    # they sit in the rendered backgrounds rather than on top of them. Cast
+    # shadows stay off (they look harsh on an isolated sprite); cavity carries
+    # the definition.
+    sh = scene.display.shading
+    sh.light = "STUDIO"
+    sh.color_type = "TEXTURE"
+    sh.show_cavity = True
+    sh.cavity_type = "BOTH"
+    sh.curvature_ridge_factor = 0.7
+    sh.curvature_valley_factor = 1.0
+    sh.show_object_outline = False
     return scene
 
 
 def setup_camera(scene, target_height):
     cam_data = bpy.data.cameras.new("cam")
     cam_data.type = "ORTHO"
-    cam_data.ortho_scale = target_height * 1.15
+    # Extra slack: the tilt makes the figure occupy more vertical view space
+    # (top of head + foreshortened body); the packer crops the surplus back.
+    cam_data.ortho_scale = target_height * 1.35
     cam = bpy.data.objects.new("cam", cam_data)
     scene.collection.objects.link(cam)
     scene.camera = cam
@@ -50,10 +74,16 @@ def setup_camera(scene, target_height):
 def aim_camera(cam, center, yaw_deg):
     # Orbit the camera instead of rotating the model: armature roots are
     # keyframed by the animation, so any rotation we set there would be
-    # overwritten on frame_set.
+    # overwritten on frame_set. The orbit is pitched down by TILT — horizontal
+    # reach shrinks by cos(TILT) and the camera rises by sin(TILT).
     yaw = math.radians(yaw_deg)
-    cam.location = (center[0] + 10 * math.sin(yaw), center[1] - 10 * math.cos(yaw), center[2])
-    cam.rotation_euler = (math.radians(90), 0, yaw)
+    d = 10
+    cam.location = (
+        center[0] + d * math.cos(TILT) * math.sin(yaw),
+        center[1] - d * math.cos(TILT) * math.cos(yaw),
+        center[2] + d * math.sin(TILT),
+    )
+    cam.rotation_euler = (math.radians(90) - TILT, 0, yaw)
 
 
 def mesh_bounds():
@@ -99,7 +129,7 @@ def render_anim(glb_path, anim_name, out_dir):
     for dir_name, yaw in DIRECTIONS.items():
         aim_camera(cam, center, yaw)
         for i in range(frame_count):
-            frame = 1 + int((anim_end - 1) * (i / max(1, frame_count)))
+            frame = 1 + int((anim_end - 1) * FRAME_OFFSETS[anim_name][i])
             scene.frame_set(frame)
             scene.render.filepath = f"{out_dir}/{anim_name}-{dir_name}-{i}.png"
             bpy.ops.render.render(write_still=True)

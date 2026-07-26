@@ -15,7 +15,7 @@
 //   exits reference them via door: { image, clip, dx, dy }).
 
 import sharp from 'sharp';
-import { mkdirSync, readFileSync } from 'node:fs';
+import { existsSync, mkdirSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { ROOT } from './util';
 
@@ -39,11 +39,34 @@ async function cut(
   bg: string,
   shape: Shape,
   out: string,
-  opts: { brighten?: number; feather?: number } = {},
+  opts: { brighten?: number; feather?: number; maskFile?: string } = {},
 ): Promise<void> {
-  let mask = sharp(maskSvg(shape)).ensureAlpha();
-  if (opts.feather) mask = mask.blur(opts.feather);
-  const maskPng = await mask.png().toBuffer();
+  let maskPng: Buffer;
+  if (opts.maskFile && existsSync(opts.maskFile)) {
+    // Refined pixel mask from tools/refine_masks.py (white = keep).
+    const m = sharp(opts.maskFile);
+    const stats = await m.stats();
+    if ((stats.channels[0]?.max ?? 0) > 0) {
+      maskPng = await sharp(opts.maskFile).ensureAlpha().png().toBuffer();
+      const { data, info } = await sharp(maskPng).raw().toBuffer({ resolveWithObject: true });
+      // white→opaque, black→transparent alpha mask
+      const rgba = Buffer.alloc(info.width * info.height * 4);
+      for (let i = 0; i < info.width * info.height; i++) {
+        const v = data[i * info.channels]!;
+        rgba[i * 4] = rgba[i * 4 + 1] = rgba[i * 4 + 2] = 255;
+        rgba[i * 4 + 3] = v;
+      }
+      maskPng = await sharp(rgba, { raw: { width: info.width, height: info.height, channels: 4 } })
+        .png()
+        .toBuffer();
+    } else {
+      maskPng = await sharp(maskSvg(shape)).ensureAlpha().png().toBuffer();
+    }
+  } else {
+    let mask = sharp(maskSvg(shape)).ensureAlpha();
+    if (opts.feather) mask = mask.blur(opts.feather);
+    maskPng = await mask.png().toBuffer();
+  }
   let img = sharp(bg).composite([{ input: maskPng, blend: 'dest-in' }]);
   if (opts.brighten) {
     const buf = await img.png().toBuffer();
@@ -64,7 +87,9 @@ const doors = JSON.parse(readFileSync(join(ROOT, 'tools/doors.json'), 'utf8'));
 for (const [room, cuts] of Object.entries(overlays) as [string, any[]][]) {
   if (only && room !== only) continue;
   for (const c of cuts) {
-    await cut(join(ROOT, `public/assets/bg/${room}.png`), c, join(FG, `${room}-${c.id}.png`));
+    await cut(join(ROOT, `public/assets/bg/${room}.png`), c, join(FG, `${room}-${c.id}.png`), {
+      maskFile: join(ROOT, `.cache/masks/${room}-${c.id}.png`),
+    });
   }
 }
 for (const [room, cuts] of Object.entries(ambients) as [string, any[]][]) {

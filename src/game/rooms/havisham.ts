@@ -7,11 +7,13 @@ export const havisham: RoomDef = {
   name: "Ms. Havisham's Quarters",
   background: 'bg/havisham',
   music: 'music/door',
-  walkboxes: [{ points: [[25, 145], [295, 145], [305, 196], [15, 196]] }],
+  walkboxes: [{ points: [[25, 145], [295, 145], [295, 151], [25, 151]] }, { points: [[25, 145], [68, 145], [68, 196], [15, 196]] }, { points: [[294, 145], [295, 145], [305, 196], [294, 196]] }, { points: [[256, 190], [305, 190], [305, 196], [256, 196]] }],
   scale: { yTop: 145, sTop: 0.7, yBottom: 196, sBottom: 1 },
   overlays: [
     { image: 'fg/havisham-table', x: 0, y: 0, z: 192 },
     { image: 'fg/havisham-chair', x: 0, y: 0, z: 187 },
+    { image: 'fg/havisham-sidetable', x: 0, y: 0, z: 156 },
+    { image: 'fg/havisham-grandclock', x: 0, y: 0, z: 185 },
   ],
   ambients: [
     { image: 'fg/havisham-amb-sconce', x: 0, y: 0, z: 0, mode: 'flicker', max: 0.45 },

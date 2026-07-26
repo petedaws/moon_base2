@@ -7,7 +7,7 @@ export const hub: RoomDef = {
   name: 'Central Hub',
   background: 'bg/hub',
   music: 'music/hub',
-  walkboxes: [{ points: [[24, 140], [296, 140], [310, 196], [10, 196]] }],
+  walkboxes: [{ points: [[70, 140], [296, 140], [296, 147], [70, 147]] }, { points: [[258, 140], [296, 140], [310, 196], [258, 196]] }, { points: [[10, 190], [310, 190], [310, 196], [10, 196]] }, { points: [[10, 153], [53, 153], [53, 196], [10, 196]] }],
   scale: { yTop: 140, sTop: 0.62, yBottom: 196, sBottom: 1 },
   overlays: [
     { image: 'fg/hub-table-left', x: 0, y: 0, z: 193 },
@@ -22,10 +22,10 @@ export const hub: RoomDef = {
   ],
   spawns: {
     fromReception: { at: [35, 172], facing: 'right' },
-    fromCorridor: { at: [108, 152], facing: 'down' },
-    fromLab: { at: [178, 152], facing: 'down' },
-    fromAdmin: { at: [232, 152], facing: 'down' },
-    fromStores: { at: [275, 152], facing: 'down' },
+    fromCorridor: { at: [108, 144], facing: 'down' },
+    fromLab: { at: [178, 144], facing: 'down' },
+    fromAdmin: { at: [232, 144], facing: 'down' },
+    fromStores: { at: [275, 144], facing: 'down' },
     fromEngineering: { at: [288, 148], facing: 'left' },
     fromMinehead: { at: [288, 178], facing: 'left' },
   },

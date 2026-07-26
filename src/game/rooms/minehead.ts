@@ -10,10 +10,11 @@ export const minehead: RoomDef = {
   name: 'Shaft 9 Mine Head',
   background: 'bg/minehead',
   music: 'music/tunnels',
-  walkboxes: [{ points: [[20, 142], [300, 142], [312, 196], [8, 196]] }],
+  walkboxes: [{ points: [[20, 142], [86, 142], [86, 196], [8, 196]] }, { points: [[224, 142], [300, 142], [312, 196], [224, 196]] }, { points: [[84, 184], [226, 184], [226, 196], [84, 196]] }],
   scale: { yTop: 142, sTop: 0.68, yBottom: 196, sBottom: 1 },
   overlays: [
     { image: 'fg/minehead-winch', x: 0, y: 0, z: 180 },
+    { image: 'fg/minehead-drill', x: 0, y: 0, z: 168 },
   ],
   ambients: [
     { image: 'fg/minehead-amb-lamp-a', x: 0, y: 0, z: 0, mode: 'flicker', max: 0.5 },
